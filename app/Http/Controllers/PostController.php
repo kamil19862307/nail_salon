@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -10,17 +11,26 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        return view('index');
+        $title = 'All posts';
+
+        $posts = Post::query()
+            ->select('id', 'user_id', 'title', 'content', 'created_at', 'updated_at')
+            ->orderByDesc('id')
+            ->get();
+
+        return view('admin.posts.index', compact('title', 'posts'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
-        //
+        $title = 'Add post';
+
+        return view('admin.posts.create', compact('title'));
     }
 
     /**
