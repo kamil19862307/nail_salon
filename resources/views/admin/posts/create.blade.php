@@ -21,21 +21,17 @@
                     <div class="panel-body">
                         <form role="form" action="{{ route('admin.posts.store') }}" method="post">
                             @csrf
+
+                            <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
                             <div class="form-group">
                                 <label>Title</label>
-                                <input class="form-control" type="text">
-                                <p class="help-block">Help text here.</p>
-                            </div>
-                            <div class="form-group">
-                                <label>Content</label>
-                                <input class="form-control" type="text">
+                                <input name="title" class="form-control" type="text">
                                 <p class="help-block">Help text here.</p>
                             </div>
                             <div class="form-group">
                                 <label>Text area</label>
-                                <textarea class="form-control" rows="8"></textarea>
+                                <textarea name="content" class="form-control" rows="8"></textarea>
                             </div>
-
 
                             <button type="submit" class="btn btn-info">Send Message </button>
 

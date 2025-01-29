@@ -37,7 +37,8 @@
 
             <a href="message-task.html" class="btn btn-info" title="New Message"><b>30 </b><i class="fa fa-envelope-o fa-2x"></i></a>
             <a href="message-task.html" class="btn btn-primary" title="New Task"><b>40 </b><i class="fa fa-bars fa-2x"></i></a>
-            <a href="login.html" class="btn btn-danger" title="Logout"><i class="fa fa-exclamation-circle fa-2x"></i></a>
+
+            <a href="{{ route('logout') }}" class="btn btn-danger" title="Logout"><i class="fa fa-sign-out fa-2x"></i></a>
 
         </div>
     </nav>
@@ -47,12 +48,11 @@
             <ul class="nav" id="main-menu">
                 <li>
                     <div class="user-img-div">
-                        <img src="assets/img/user.png" class="img-thumbnail" />
-
+                        <img src="{{ asset('storage/images/admin/user.png') }}" class="img-thumbnail" />
                         <div class="inner-text">
-                            Jhon Deo Alex
+                            {{ auth()->user()->name }}
                             <br />
-                            <small>Last Login : 2 Weeks Ago </small>
+                            <small>Last Login : 2 hours Ago </small>
                         </div>
                     </div>
 
@@ -120,6 +120,9 @@
                     <a href="table.html"><i class="fa fa-flash "></i>Data Tables </a>
 
                 </li>
+
+
+                <!-------------------------------------- POSTS -------------------------------------------------------->
                 <li>
                     <a href="#"><i class="fa fa-bicycle "></i>Посты <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
@@ -133,6 +136,9 @@
 
                     </ul>
                 </li>
+                <!--------------------------------------- END OF POSTS ------------------------------------------------>
+
+
                 <li>
                     <a href="#"><i class="fa fa-bicycle "></i>Forms <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">

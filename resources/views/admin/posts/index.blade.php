@@ -29,7 +29,7 @@
                             <small>ID - {{ $post->id }}</small>
                         </p>
                         <p>
-                            <small><a href="#">Author bu User_ID - {{ $post->user_id }}</a></small>
+                            <small><a href="#">Author - {{ $post->user->name }}</a></small>
                         </p>
                         <p>
                             <small>Created at  - {{ $post->created_at }}</small>
@@ -40,7 +40,9 @@
 
                         <p>{{ $post->content }}</p>
 
-                        <p class="text-right"><a href="#"><small>Читать далее</small></a></p>
+                        <p class="text-left"><a href="#"><small>Читать далее</small></a></p>
+                        <p class="text-left"><a href="#"><small>Изменить</small></a></p>
+                        <p class="text-left"><a href="#"><small>Удалить</small></a></p>
 
                     </div>
                 </div>
