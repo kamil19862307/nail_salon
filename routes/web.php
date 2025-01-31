@@ -19,4 +19,7 @@ Route::prefix('admin')->middleware('auth')->controller(PostController::class)->g
     Route::get('/posts', 'index')->name('admin.posts');
     Route::get('/posts/create', 'create')->name('admin.posts.create');
     Route::post('/posts/create', 'store')->name('admin.posts.store');
+    Route::get('/posts/{post}/edit', 'edit')->name('admin.posts.edit');
+    Route::patch('/posts/{post}', 'update')->name('admin.posts.update');
+    Route::delete('/posts/{post}', 'destroy')->name('admin.posts.destroy');
 });

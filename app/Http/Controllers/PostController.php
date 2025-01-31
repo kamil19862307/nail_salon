@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Http\Requests\UpdatePostFormRequest;
 use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -17,8 +19,8 @@ class PostController extends Controller
     {
         $title = 'All posts';
 
-        $posts = Post::query()
-            ->select('id', 'user_id', 'title', 'content', 'created_at', 'updated_at')
+        $posts = Post::with('user')
+            ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
             ->orderByDesc('id')
             ->get();
 
@@ -30,6 +32,11 @@ class PostController extends Controller
      */
     public function create(): View
     {
+//        Gate::authorize('create-post');
+        if (Gate::denies('create-post')){
+            abort(403);
+        }
+
         $title = 'Add post';
 
         return view('admin.posts.create', compact('title'));
@@ -40,6 +47,10 @@ class PostController extends Controller
      */
     public function store(PostRequest $request): RedirectResponse
     {
+        if (Gate::denies('create-post')){
+            abort(403);
+        }
+
         $validated = $request->validated();
 
         Post::query()->create($validated);
@@ -60,15 +71,19 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $title = 'Изменить пост';
+
+        return view('admin.posts.edit', compact('title', 'post'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostFormRequest $request, Post $post)
     {
-        //
+        $post->update($request->validated());
+
+        return to_route('admin.posts')->with('success', 'Пост успешно изменён');
     }
 
     /**
@@ -76,6 +91,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete($post);
+
+        return to_route('admin.posts')->with('success', 'Пост успешно удалён');
     }
 }

@@ -10,7 +10,11 @@
         <div class="row">
             <div class="col-md-12">
                 <h1 class="page-head-line">Все посты</h1>
-                <h1 class="page-subhead-line">This is dummy text , you can replace it with your original text. </h1>
+                <h1 class="page-subhead-line">
+                    @if(session('success'))
+                        {{ session('success') }}
+                    @endif
+                </h1>
 
             </div>
         </div>
@@ -41,8 +45,14 @@
                         <p>{{ $post->content }}</p>
 
                         <p class="text-left"><a href="#"><small>Читать далее</small></a></p>
-                        <p class="text-left"><a href="#"><small>Изменить</small></a></p>
-                        <p class="text-left"><a href="#"><small>Удалить</small></a></p>
+                        <p class="text-left"><a href="{{ route('admin.posts.edit', $post) }}"><small>Изменить</small></a></p>
+                        <p class="text-left">
+                            <form action="{{ route('admin.posts.destroy', $post) }}" method="post">
+                                @csrf
+                                @method('delete')
+                                <button type="submit" class="btn btn-danger">Удалить</button>
+                            </form>
+                        </p>
 
                     </div>
                 </div>
