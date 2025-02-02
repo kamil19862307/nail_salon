@@ -55,7 +55,7 @@ class PostController extends Controller
 
         Post::query()->create($validated);
 
-        return to_route('admin.posts');
+        return to_route('admin.posts')->with('success', 'Пост успешно создан');
     }
 
     /**
@@ -69,8 +69,12 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post)
+    public function edit(Post $post): View
     {
+        if (!Gate::allows('update-post', $post)){
+            abort(403);
+        }
+
         $title = 'Изменить пост';
 
         return view('admin.posts.edit', compact('title', 'post'));
@@ -79,8 +83,12 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePostFormRequest $request, Post $post)
+    public function update(UpdatePostFormRequest $request, Post $post): RedirectResponse
     {
+        if (!Gate::allows('update-post', $post)){
+            abort(403);
+        }
+
         $post->update($request->validated());
 
         return to_route('admin.posts')->with('success', 'Пост успешно изменён');
@@ -89,8 +97,12 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post): RedirectResponse
     {
+        if (Gate::denies('delete-post', $post)){
+            abort(403);
+        }
+
         $post->delete($post);
 
         return to_route('admin.posts')->with('success', 'Пост успешно удалён');

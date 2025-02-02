@@ -45,14 +45,20 @@
                         <p>{{ $post->content }}</p>
 
                         <p class="text-left"><a href="#"><small>Читать далее</small></a></p>
-                        <p class="text-left"><a href="{{ route('admin.posts.edit', $post) }}"><small>Изменить</small></a></p>
-                        <p class="text-left">
-                            <form action="{{ route('admin.posts.destroy', $post) }}" method="post">
-                                @csrf
-                                @method('delete')
-                                <button type="submit" class="btn btn-danger">Удалить</button>
-                            </form>
-                        </p>
+
+                        @can('update-post', $post)
+                            <p class="text-left"><a href="{{ route('admin.posts.edit', $post) }}"><small>Изменить</small></a></p>
+                        @endcan
+
+                        @can('delete-post', $post)
+                            <p class="text-left">
+                                <form action="{{ route('admin.posts.destroy', $post) }}" method="post">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger">Удалить</button>
+                                </form>
+                            </p>
+                        @endcan
 
                     </div>
                 </div>

@@ -22,9 +22,27 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Admin can CRUD everywhere
+        Gate::before(function (User $user){
+            if ($user->role === 1)
+                return true;
+
+            return false;
+        });
+
+        // Only admin or author can create posts
         Gate::define('create-post', function (User $user){
-            // Only admin or author can create posts
             return in_array($user->role, [1, 2]);
+        });
+
+        // A specific author can edit only his own post, but the admin can edit any post
+        Gate::define('update-post', function (User $user, Post $post){
+            return $user->id === $post->user_id;
+        });
+
+        // A specific author can delete only his own post, but the admin can delete any post
+        Gate::define('delete-post', function (User $user, Post $post){
+            return $user->id === $post->user_id;
         });
     }
 }
