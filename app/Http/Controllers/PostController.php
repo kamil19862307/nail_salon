@@ -33,7 +33,11 @@ class PostController extends Controller
     public function create(): View
     {
 //        Gate::authorize('create-post');
-        if (Gate::denies('create-post')){
+//        if (Gate::denies('create-post')){
+//            abort(403);
+//        }
+
+        if (request()->user()->cannot('create', Post::class)){
             abort(403);
         }
 
@@ -47,9 +51,11 @@ class PostController extends Controller
      */
     public function store(PostRequest $request): RedirectResponse
     {
-        if (Gate::denies('create-post')){
-            abort(403);
-        }
+//        if (Gate::denies('create-post')){
+//            abort(403);
+//        }
+
+        Gate::authorize('create', Post::class);
 
         $validated = $request->validated();
 
@@ -71,9 +77,11 @@ class PostController extends Controller
      */
     public function edit(Post $post): View
     {
-        if (!Gate::allows('update-post', $post)){
-            abort(403);
-        }
+//        if (!Gate::allows('update-post', $post)){
+//            abort(403);
+//        }
+
+        Gate::authorize('update', $post);
 
         $title = 'Изменить пост';
 
@@ -85,9 +93,9 @@ class PostController extends Controller
      */
     public function update(UpdatePostFormRequest $request, Post $post): RedirectResponse
     {
-        if (!Gate::allows('update-post', $post)){
-            abort(403);
-        }
+//        if (!Gate::allows('update-post', $post)){
+//            abort(403);
+//        }
 
         $post->update($request->validated());
 
@@ -99,11 +107,11 @@ class PostController extends Controller
      */
     public function destroy(Post $post): RedirectResponse
     {
-        if (Gate::denies('delete-post', $post)){
+        if (Gate::denies('delete', $post)){
             abort(403);
         }
 
-        $post->delete($post);
+        $post->delete();
 
         return to_route('admin.posts')->with('success', 'Пост успешно удалён');
     }

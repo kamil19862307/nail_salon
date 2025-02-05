@@ -46,11 +46,11 @@
 
                         <p class="text-left"><a href="#"><small>Читать далее</small></a></p>
 
-                        @can('update-post', $post)
+                        @can('update', $post)
                             <p class="text-left"><a href="{{ route('admin.posts.edit', $post) }}"><small>Изменить</small></a></p>
                         @endcan
 
-                        @can('delete-post', $post)
+                        @can('delete', $post)
                             <p class="text-left">
                                 <form action="{{ route('admin.posts.destroy', $post) }}" method="post">
                                     @csrf

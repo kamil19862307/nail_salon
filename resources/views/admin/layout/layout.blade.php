@@ -130,10 +130,10 @@
                             <a href="{{ route('admin.posts') }}"><i class="fa fa-desktop "></i>Все посты</a>
                         </li>
 
-                        @can('create-post')
-                        <li>
-                            <a href="{{ route('admin.posts.create') }}"><i class="fa fa-desktop "></i>Создать пост</a>
-                        </li>
+                        @can('create', \App\Models\Post::class)
+                            <li>
+                                <a href="{{ route('admin.posts.create') }}"><i class="fa fa-desktop "></i>Создать пост</a>
+                            </li>
                         @endcan
 
                     </ul>
