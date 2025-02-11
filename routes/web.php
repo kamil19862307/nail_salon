@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
+
+Route::view('/', 'index');
 
 Route::middleware('auth')->group(function (){
     Route::view('/admin', 'admin.index', ['title' => 'Main page']);
@@ -22,4 +25,8 @@ Route::prefix('admin')->middleware('auth')->controller(PostController::class)->g
     Route::get('/posts/{post}/edit', 'edit')->name('admin.posts.edit');
     Route::patch('/posts/{post}', 'update')->name('admin.posts.update');
     Route::delete('/posts/{post}', 'destroy')->name('admin.posts.destroy');
+});
+
+Route::prefix('admin')->middleware('auth')->controller(CalendarController::class)->group(function (){
+    Route::get('calendar', 'index')->name('admin.calendar');
 });

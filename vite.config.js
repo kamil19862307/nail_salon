@@ -5,8 +5,11 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                'resources/css/style.css',
+
                 'resources/css/bootstrap.css',
                 'resources/css/font-awesome.css',
+                'resources/css/pricing.css',
                 'resources/css/basic.css',
                 'resources/css/custom.css',
 
