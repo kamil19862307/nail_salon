@@ -8,6 +8,7 @@ use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
@@ -19,10 +20,12 @@ class PostController extends Controller
     {
         $title = 'All posts';
 
-        $posts = Post::with('user')
-            ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
-            ->orderByDesc('id')
-            ->get();
+        $posts = Cache::rememberForever('posts', function (){
+            return Post::with('user')
+                ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
+                ->orderByDesc('id')
+                ->get();
+        });
 
         return view('admin.posts.index', compact('title', 'posts'));
     }
@@ -60,6 +63,8 @@ class PostController extends Controller
         $validated = $request->validated();
 
         Post::query()->create($validated);
+
+        Cache::flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно создан');
     }
@@ -99,6 +104,8 @@ class PostController extends Controller
 
         $post->update($request->validated());
 
+        Cache::flush();
+
         return to_route('admin.posts')->with('success', 'Пост успешно изменён');
     }
 
@@ -112,6 +119,8 @@ class PostController extends Controller
         }
 
         $post->delete();
+
+        Cache::flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно удалён');
     }
