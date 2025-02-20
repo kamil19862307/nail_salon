@@ -8,6 +8,7 @@ use App\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
@@ -19,10 +20,12 @@ class PostController extends Controller
     {
         $title = 'All posts';
 
-        $posts = Post::with('user')
-            ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
-            ->orderByDesc('id')
-            ->get();
+        $posts = Cache::rememberForever('posts', function (){
+            return Post::with('user')
+                ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
+                ->orderByDesc('id')
+                ->get();
+        });
 
         return view('admin.posts.index', compact('title', 'posts'));
     }
@@ -33,7 +36,11 @@ class PostController extends Controller
     public function create(): View
     {
 //        Gate::authorize('create-post');
-        if (Gate::denies('create-post')){
+//        if (Gate::denies('create-post')){
+//            abort(403);
+//        }
+
+        if (request()->user()->cannot('create', Post::class)){
             abort(403);
         }
 
@@ -47,13 +54,17 @@ class PostController extends Controller
      */
     public function store(PostRequest $request): RedirectResponse
     {
-        if (Gate::denies('create-post')){
-            abort(403);
-        }
+//        if (Gate::denies('create-post')){
+//            abort(403);
+//        }
+
+        Gate::authorize('create', Post::class);
 
         $validated = $request->validated();
 
         Post::query()->create($validated);
+
+        Cache::flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно создан');
     }
@@ -71,9 +82,11 @@ class PostController extends Controller
      */
     public function edit(Post $post): View
     {
-        if (!Gate::allows('update-post', $post)){
-            abort(403);
-        }
+//        if (!Gate::allows('update-post', $post)){
+//            abort(403);
+//        }
+
+        Gate::authorize('update', $post);
 
         $title = 'Изменить пост';
 
@@ -85,11 +98,13 @@ class PostController extends Controller
      */
     public function update(UpdatePostFormRequest $request, Post $post): RedirectResponse
     {
-        if (!Gate::allows('update-post', $post)){
-            abort(403);
-        }
+//        if (!Gate::allows('update-post', $post)){
+//            abort(403);
+//        }
 
         $post->update($request->validated());
+
+        Cache::flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно изменён');
     }
@@ -99,11 +114,13 @@ class PostController extends Controller
      */
     public function destroy(Post $post): RedirectResponse
     {
-        if (Gate::denies('delete-post', $post)){
+        if (Gate::denies('delete', $post)){
             abort(403);
         }
 
-        $post->delete($post);
+        $post->delete();
+
+        Cache::flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно удалён');
     }
