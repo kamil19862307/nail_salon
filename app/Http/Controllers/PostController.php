@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostFormRequest;
 use App\Models\Post;
+use Illuminate\Contracts\Cache\Factory as Cache;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+    public function __construct(public Cache $cache)
+    {
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +24,7 @@ class PostController extends Controller
     {
         $title = 'All posts';
 
-        $posts = Cache::rememberForever('posts', function (){
+        $posts = $this->cache->rememberForever('posts', function (){
             return Post::with('user')
                 ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
                 ->orderByDesc('id')
@@ -64,7 +68,7 @@ class PostController extends Controller
 
         Post::query()->create($validated);
 
-        Cache::flush();
+        $this->cache->flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно создан');
     }
@@ -104,7 +108,7 @@ class PostController extends Controller
 
         $post->update($request->validated());
 
-        Cache::flush();
+        $this->cache->flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно изменён');
     }
@@ -120,7 +124,7 @@ class PostController extends Controller
 
         $post->delete();
 
-        Cache::flush();
+        $this->cache->flush();
 
         return to_route('admin.posts')->with('success', 'Пост успешно удалён');
     }
