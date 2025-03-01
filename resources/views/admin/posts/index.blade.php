@@ -27,6 +27,10 @@
 
                         {{ $post->title }}
 
+                        @if($post->fresh)
+                            <i class="fa fa-star" aria-hidden="true" style="color: red;"></i> Свежая новость
+                        @endif
+
                     </div>
                     <div class="panel-body">
                         <p>

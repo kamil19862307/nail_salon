@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostFormRequest;
 use App\Models\Post;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+    // Using Contracts instead Facades
     public function __construct(public Cache $cache)
     {
 
@@ -26,7 +28,8 @@ class PostController extends Controller
 
         $posts = $this->cache->rememberForever('posts', function (){
             return Post::with('user')
-                ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at')
+                ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at', 'fresh')
+                ->where('active', '=', 1)
                 ->orderByDesc('id')
                 ->get();
         });
@@ -66,7 +69,9 @@ class PostController extends Controller
 
         $validated = $request->validated();
 
-        Post::query()->create($validated);
+        $post = Post::query()->create($validated);
+
+        PostCreated::dispatch($post->id);
 
         $this->cache->flush();
 
