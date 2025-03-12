@@ -6,11 +6,13 @@ use App\Events\PostCreated;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostFormRequest;
 use App\Models\Post;
+use Exception;
 use Illuminate\Contracts\Cache\Factory as Cache;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {

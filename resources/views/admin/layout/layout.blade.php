@@ -9,12 +9,14 @@
         'resources/css/bootstrap.css',
         'resources/css/font-awesome.css',
         'resources/css/pricing.css',
+        'resources/css/bootstrap-fileupload.min.css',
         'resources/css/basic.css',
         'resources/css/custom.css',
 
         'resources/js/jquery-1.10.2.js',
         'resources/js/bootstrap.js',
         'resources/js/jquery.metisMenu.js',
+        'resources/js/bootstrap-fileupload.js',
         'resources/js/custom.js',
     ])
 
@@ -49,9 +51,11 @@
             <ul class="nav" id="main-menu">
                 <li>
                     <div class="user-img-div">
-                        <img src="{{ asset('storage/images/admin/user.png') }}" class="img-thumbnail" />
+                        <img src="{{ asset('storage/images/admin/avatars/' . auth()->user()->avatar) }}" class="img-thumbnail" />
                         <div class="inner-text">
                             {{ auth()->user()->name }}
+                            <br />
+                            <a href="{{ route('admin.users.edit', auth()->user()) }}" style="color: #fff">Profile</a>
                             <br />
                             <small>Last Login : 2 hours Ago </small>
                         </div>
