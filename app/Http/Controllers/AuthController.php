@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginFormRequest;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,9 @@ class AuthController extends Controller
                 'email' => 'Пароль или логин неверные'
             ])->onlyInput('email');
         }
+
+        $user = User::find(Auth::id());
+        $user->update(['last_login' => now()]);
 
         Log::info('Пользователь прошел аутентификацию.', ['auth_id' => Auth::id()]);
 

@@ -58,6 +58,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserFormRequest $request, User $user)
     {
+        // remove nulls
         $incomingData = array_filter($request->validated());
 
         if (!empty($incomingData['avatar'])){
