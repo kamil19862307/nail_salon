@@ -27,10 +27,16 @@ class AuthController extends Controller
             ])->onlyInput('email');
         }
 
-        $user = User::find(Auth::id());
-        $user->update(['last_login' => now()]);
+//        $user = User::find(Auth::id());
+//        $user->update(['last_login' => now()]);
+//
+//        Log::info('Пользователь прошел аутентификацию.', ['auth_id' => Auth::id()]);
 
-        Log::info('Пользователь прошел аутентификацию.', ['auth_id' => Auth::id()]);
+        $user = tap(User::find(Auth::id()), function ($user){
+
+            Log::info("Пользователь {$user->id} залогинился");
+
+        })->update(['last_login' => now()]);
 
         $request->session()->regenerate();
 
