@@ -57,7 +57,7 @@
                             <br />
                             <a href="{{ route('admin.users.edit', auth()->user()) }}" style="color: #fff">Profile</a>
                             <br />
-                            <small>Last Login : 2 hours Ago </small>
+                            <small>Last Login : {{ auth()->user()->last_login }} </small>
                         </div>
                     </div>
 
