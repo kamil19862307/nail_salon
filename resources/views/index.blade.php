@@ -10,7 +10,7 @@
 
 </head>
 <body>
-<h1>February 2022</h1>
+<h1>{{ now()->format('F jS') }}</h1>
 <p>Holidays and Daily Observances in the United States</a>
 <ul>
     <li><time datetime="2022-02-01">1</time>Dark Chocolate Day</li>

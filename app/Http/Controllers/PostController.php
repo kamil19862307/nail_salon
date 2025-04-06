@@ -12,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -74,6 +75,8 @@ class PostController extends Controller
         $post = Post::query()->create($validated);
 
         PostCreated::dispatch($post->id);
+
+        Mail::to('admin@nailsalon.ru')->send(new \App\Mail\PostCreated($post));
 
         $this->cache->flush();
 
