@@ -6,6 +6,7 @@ use App\Events\PostCreated;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostFormRequest;
 use App\Models\Post;
+use App\Notifications\PostDeleted;
 use Exception;
 use Illuminate\Contracts\Cache\Factory as Cache;
 use Illuminate\Contracts\View\View;
@@ -13,6 +14,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -45,6 +47,8 @@ class PostController extends Controller
      */
     public function create(): View
     {
+        $title = 'Add post';
+
 //        Gate::authorize('create-post');
 //        if (Gate::denies('create-post')){
 //            abort(403);
@@ -53,8 +57,6 @@ class PostController extends Controller
         if (request()->user()->cannot('create', Post::class)){
             abort(403);
         }
-
-        $title = 'Add post';
 
         return view('admin.posts.create', compact('title'));
     }
@@ -131,6 +133,15 @@ class PostController extends Controller
         if (Gate::denies('delete', $post)){
             abort(403);
         }
+
+        // Send email after deleting post
+//        $user = auth()->user();
+//
+//        $user->notify(new PostDeleted($post->title));
+
+        Notification::route('mail', [
+            'admin@nail.ru' => 'Admin Name'
+        ])->notify(new PostDeleted($post->title));
 
         $post->delete();
 
