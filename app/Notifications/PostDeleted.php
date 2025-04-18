@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,7 +15,7 @@ class PostDeleted extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public string $postTitle)
+    public function __construct(public string $postTitle, public User $author)
     {
         //
     }
@@ -38,6 +39,7 @@ class PostDeleted extends Notification implements ShouldQueue
                     ->greeting('Hello!')
                     ->subject('Your post has been deleted')
                     ->line("Post ' {$this->postTitle} ' was deleted.")
+                    ->line("Deleted by: {$this->author->name} ({$this->author->email})")
                     ->action('Notification Action', url('/'))
                     ->line('Thank you for using our application!');
     }

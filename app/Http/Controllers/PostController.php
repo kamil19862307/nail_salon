@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\PostCreated;
+use App\Events\PostDeletedEvent;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostFormRequest;
 use App\Models\Post;
+use App\Models\User;
 use App\Notifications\PostDeleted;
 use Exception;
 use Illuminate\Contracts\Cache\Factory as Cache;
@@ -134,16 +136,26 @@ class PostController extends Controller
             abort(403);
         }
 
+        $postTitle = $post->title;
+
+        // Who deleted post
+        $author = auth()->user();
+
+        // Email will be sent to admin
+        $user = User::query()->where('email', '=', 'admin@nail.ru')->firstOrFail();
+
         // Send email after deleting post
 //        $user = auth()->user();
 //
 //        $user->notify(new PostDeleted($post->title));
 
-        Notification::route('mail', [
-            'admin@nail.ru' => 'Admin Name'
-        ])->notify(new PostDeleted($post->title));
+//        Notification::route('mail', [
+//            'admin@nail.ru' => 'Admin Name'
+//        ])->notify(new PostDeleted($post->title));
 
         $post->delete();
+
+        event(new PostDeletedEvent($user, $postTitle, $author));
 
         $this->cache->flush();
 
