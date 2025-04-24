@@ -6,6 +6,7 @@ use App\Events\PostCreated;
 use App\Events\PostDeletedEvent;
 use App\Http\Requests\PostRequest;
 use App\Http\Requests\UpdatePostFormRequest;
+use App\Jobs\EditPost;
 use App\Models\Post;
 use App\Models\User;
 use App\Notifications\PostDeleted;
@@ -17,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -33,6 +35,8 @@ class PostController extends Controller
     {
         $title = 'All posts';
 
+        $result = Process::run(['php', 'artisan', 'migrate'])->errorOutput();
+
         $posts = $this->cache->rememberForever('posts', function (){
             return Post::with('user')
                 ->select('id', 'title', 'user_id', 'content', 'created_at', 'updated_at', 'fresh')
@@ -41,7 +45,7 @@ class PostController extends Controller
                 ->get();
         });
 
-        return view('admin.posts.index', compact('title', 'posts'));
+        return view('admin.posts.index', compact('title', 'posts', 'result'));
     }
 
     /**
@@ -123,6 +127,8 @@ class PostController extends Controller
         $post->update($request->validated());
 
         $this->cache->flush();
+
+        EditPost::dispatch($post);
 
         return to_route('admin.posts')->with('success', 'Пост успешно изменён');
     }

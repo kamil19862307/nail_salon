@@ -16,7 +16,8 @@ class Post extends Model
         'title',
         'content',
         'active',
-        'fresh'
+        'fresh',
+        'slug'
     ];
 
     public function user(): BelongsTo
